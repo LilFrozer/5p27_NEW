@@ -1,0 +1,932 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Client</class>
+ <widget class="QMainWindow" name="Client">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1100</width>
+    <height>768</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Client</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,4,1">
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QPushButton" name="wdgt_connect">
+        <property name="text">
+         <string>ПОДКЛЮЧИТЬСЯ</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="wdgt_load_css">
+        <property name="text">
+         <string>ЗАГРУЗИТЬ ЦСС</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="wdgt_start">
+        <property name="text">
+         <string>СТАРТ</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="wdgt_stop">
+        <property name="text">
+         <string>СТОП</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="wdgt_send_ku">
+        <property name="text">
+         <string>ОТПРАВИТЬ
+УПРАВЛЕНИЕ</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="groupBox">
+        <property name="title">
+         <string>УПРАВЛЕНИЕ</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_2">
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <item>
+            <widget class="QLabel" name="label">
+             <property name="text">
+              <string>КИ</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="wdgt_KI">
+             <property name="minimum">
+              <number>1</number>
+             </property>
+             <property name="maximum">
+              <number>10</number>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="checkBox">
+           <property name="text">
+            <string>CheckBox</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="verticalSpacer">
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QVBoxLayout" name="graphicLayout"/>
+    </item>
+    <item>
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="tab">
+       <attribute name="title">
+        <string>Tab 1</string>
+       </attribute>
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_3">
+          <item>
+           <widget class="QLabel" name="wdgt_status_css1">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_css2">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_css3">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_css4">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_css5">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_css6">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_css7">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_css8">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_css9">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_css10">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_css11">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_css12">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_css13">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_css14">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_css15">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_css16">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_4">
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum11">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum12">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum13">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum14">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum15">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum16">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum17">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum18">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum19">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum110">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum111">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum112">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum113">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum114">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum115">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum116">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum117">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum118">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum119">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum120">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum121">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum122">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum123">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum124">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum125">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum126">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum127">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum128">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum129">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum131">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum130">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum132">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_5">
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum21">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum22">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum23">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum24">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum25">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum26">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum27">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum28">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum29">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum210">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum211">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum212">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum213">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum214">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum215">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum216">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum217">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum218">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum219">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum220">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum221">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum222">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum223">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum224">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum225">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum226">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum227">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum228">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum229">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum230">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum231">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum232">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_6">
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum31">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum32">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum33">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum34">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum35">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum36">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum37">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum38">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum39">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum310">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum311">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum312">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum313">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum314">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum315">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum316">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum317">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum318">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum319">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum320">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum321">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum322">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum323">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum324">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum325">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum326">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum327">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum328">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum329">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum330">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum331">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="wdgt_status_sum332">
+            <property name="text">
+             <string>0x00000000</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tab_2">
+       <attribute name="title">
+        <string>Tab 2</string>
+       </attribute>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

@@ -1,0 +1,15 @@
+{
+	"PATH" : "/po/complex/ma/css/",
+	"CSS_FILES" : 
+	[
+		"boot.dat",
+		"pku.dat",
+		"start.dat",
+		"Conf_F4.dat",
+		"ProgV1_s.dat",
+		"prog_g2.dat",
+		"Freq.dat",
+		"TS_1.dat",
+		"end_l.dat"
+	]
+}
