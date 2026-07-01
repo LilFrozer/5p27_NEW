@@ -123,6 +123,48 @@
             </widget>
            </item>
            <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_4">
+             <item>
+              <widget class="QCheckBox" name="wdgt_CHAN1">
+               <property name="text">
+                <string>КАНАЛ 1</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="wdgt_CHAN2">
+               <property name="text">
+                <string>КАНАЛ 2</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="wdgt_CHAN3">
+               <property name="text">
+                <string>КАНАЛ 3</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="wdgt_CHAN4">
+               <property name="text">
+                <string>КАНАЛ 4</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="wdgt_CHAN5">
+               <property name="text">
+                <string>КАНАЛ 5</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
             <spacer name="verticalSpacer">
              <property name="orientation">
               <enum>Qt::Orientation::Vertical</enum>

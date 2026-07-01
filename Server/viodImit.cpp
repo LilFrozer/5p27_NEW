@@ -173,7 +173,9 @@ void ViodImit::sendViodMsg(std::vector<qword> &data,
     msg_header->viod_header.addr_info.dmid = static_cast<uint16_t>(dmid);
     msg_header->viod_header.addr_info.dpid = dpid;
     msg_header->viod_header.addr_info.dlid = dlid;
-    msg_header->viod_header.f = 1;
+
+    if (chid == 0 || chid == 1 || chid == 2 || chid == 3 || chid == 4)
+        msg_header->viod_header.f = 0;
     msg_header->viod_header.e = 1;
     msg_header->viod_header.chid = 0xF&chid;
     msg_header->viod_header.id_port = 10001;
@@ -230,22 +232,110 @@ void ViodImit::sendLoop()
     srand(time(NULL));
     static int cnt = 0;
     while (send_running_) {
-        if (cnt == 5000000) {
-            u32 one = static_cast<u32>(rand() % 1337);
-            u32 two = static_cast<u32>(rand() % 1337);
-            u32 three = static_cast<u32>(rand() % 1337);
-            u32 four = static_cast<u32>(rand() % 1337);
-            u32 five = static_cast<u32>(rand() % 1337);
-            static std::vector<qword> data{qword{0xa5d0000c, 0x05000500, 0x05000000, 0x00008fb7},
-                                          qword{0x88888888, 0x00000001, 0x00000002, 0x00000003},
-                                          qword{0x00000004, 0x0000005, 0x00000006, 0x00000007},
-                                          qword{0x00000008, 0x00000009, 0x0000000a, 0x0000000b}};
-            data[1].word_1 = one;
-            data[1].word_3 = two;
-            data[2].word_2 = three;
-            data[3].word_0 = four;
-            data[4].word_2 = five;
-            sendViodMsg(data, 0, 0, 0, 0, 0, 0, 0);
+        if (cnt == 50000000) {
+            std::vector<qword> dataStatuses{qword{0xa5d0000c, 0x05000500, 0x05000000, 0x00008fb7},
+                    qword{0x88888888, static_cast<u32>(rand() % 1337), 0x00000002, 0x00000003},
+                    qword{0x00000004, 0x0000005, 0x00000006, 0x00000007},
+                    qword{0x00000008, 0x00000009, static_cast<u32>(rand() % 1337), 0x0000000b},
+
+                    qword{0xa5c0000c, 0x05000500, 0x05000000, 0x00008fb7},
+                    qword{0x88888888, static_cast<u32>(rand() % 1337), 0x00000002, 0x00000003},
+                    qword{0x00000004, 0x0000005, 0x00000006, 0x00000007},
+                    qword{static_cast<u32>(rand() % 1337), 0x00000009, 0x0000000a, 0x0000000b},
+                    qword{0x00000008, 0x00000009, 0x0000000a, 0x0000000b},
+                    qword{0x00000008, 0x00000009, static_cast<u32>(rand() % 1337), 0x0000000b},
+                    qword{0x00000008, 0x00000009, 0x0000000a, 0x0000000b},
+                    qword{0x00000008, static_cast<u32>(rand() % 1337), 0x0000000a, 0x0000000b},
+
+                    qword{0xa5c0000c, 0x05000500, 0x05000000, 0x00008fb7},
+                    qword{0x88888888, 0x00000001, 0x00000002, 0x00000003},
+                    qword{static_cast<u32>(rand() % 1337), 0x0000005, 0x00000006, 0x00000007},
+                    qword{0x00000008, 0x00000009, 0x0000000a, 0x0000000b},
+                    qword{0x00000008, static_cast<u32>(rand() % 1337), 0x0000000a, 0x0000000b},
+                    qword{0x00000008, 0x00000009, 0x0000000a, 0x0000000b},
+                    qword{0x00000008, 0x00000009, static_cast<u32>(rand() % 1337), 0x0000000b},
+                    qword{0x00000008, static_cast<u32>(rand() % 1337), 0x0000000a, 0x0000000b},
+
+                    qword{0xa5c0000c, static_cast<u32>(rand() % 1337), 0x05000000, 0x00008fb7},
+                    qword{0x88888888, 0x00000001, 0x00000002, 0x00000003},
+                    qword{0x00000004, 0x0000005, 0x00000006, 0x00000007},
+                    qword{static_cast<u32>(rand() % 1337), 0x00000009, 0x0000000a, 0x0000000b},
+                    qword{0x00000008, 0x00000009, 0x0000000a, 0x0000000b},
+                    qword{0x00000008, 0x00000009, static_cast<u32>(rand() % 1337), 0x0000000b},
+                    qword{0x00000008, 0x00000009, 0x0000000a, 0x0000000b},
+                    qword{0x00000008, static_cast<u32>(rand() % 1337), 0x0000000a, 0x0000000b}};
+            sendViodMsg(dataStatuses, 0, 0, 0, 0, 0, 0, 5);
+
+            std::vector<qword> data1{};
+            for (int i{}; i < 80; i++) {
+                qword qw{0, 0, 0, 0};
+                short sin_val = static_cast<short>(rand() % 65536);
+                short cos_val = static_cast<short>(rand() % 65536);
+                u32 packed = (static_cast<u32>(cos_val) << 16) | (static_cast<u32>(sin_val) & 0xFFFF);
+                qw.word_0 = packed;
+                qw.word_1 = packed;
+                qw.word_2 = packed;
+                qw.word_3 = packed;
+                data1.push_back(qw);
+            }
+            sendViodMsg(data1, 0, 0, 0, 0, 0, 0, 0);
+
+            std::vector<qword> data2{};
+            for (int i{}; i < 80; i++) {
+                qword qw{0, 0, 0, 0};
+                short sin_val = static_cast<short>(rand() % 65536);
+                short cos_val = static_cast<short>(rand() % 65536);
+                u32 packed = (static_cast<u32>(cos_val) << 16) | (static_cast<u32>(sin_val) & 0xFFFF);
+                qw.word_0 = packed;
+                qw.word_1 = packed;
+                qw.word_2 = packed;
+                qw.word_3 = packed;
+                data2.push_back(qw);
+            }
+            sendViodMsg(data2, 0, 0, 0, 0, 0, 0, 1);
+
+            std::vector<qword> data3{};
+            for (int i{}; i < 80; i++) {
+                qword qw{0, 0, 0, 0};
+                short sin_val = static_cast<short>(rand() % 65536);
+                short cos_val = static_cast<short>(rand() % 65536);
+                u32 packed = (static_cast<u32>(cos_val) << 16) | (static_cast<u32>(sin_val) & 0xFFFF);
+                qw.word_0 = packed;
+                qw.word_1 = packed;
+                qw.word_2 = packed;
+                qw.word_3 = packed;
+                data3.push_back(qw);
+            }
+            sendViodMsg(data3, 0, 0, 0, 0, 0, 0, 2);
+
+            std::vector<qword> data4{};
+            for (int i{}; i < 80; i++) {
+                qword qw{0, 0, 0, 0};
+                short sin_val = static_cast<short>(rand() % 65536);
+                short cos_val = static_cast<short>(rand() % 65536);
+                u32 packed = (static_cast<u32>(cos_val) << 16) | (static_cast<u32>(sin_val) & 0xFFFF);
+                qw.word_0 = packed;
+                qw.word_1 = packed;
+                qw.word_2 = packed;
+                qw.word_3 = packed;
+                data4.push_back(qw);
+            }
+            sendViodMsg(data4, 0, 0, 0, 0, 0, 0, 3);
+
+            std::vector<qword> data5{};
+            for (int i{}; i < 80; i++) {
+                qword qw{0, 0, 0, 0};
+                short sin_val = static_cast<short>(rand() % 65536);
+                short cos_val = static_cast<short>(rand() % 65536);
+                u32 packed = (static_cast<u32>(cos_val) << 16) | (static_cast<u32>(sin_val) & 0xFFFF);
+                qw.word_0 = packed;
+                qw.word_1 = packed;
+                qw.word_2 = packed;
+                qw.word_3 = packed;
+                data5.push_back(qw);
+            }
+            sendViodMsg(data5, 0, 0, 0, 0, 0, 0, 4);
+
             cnt = 0;
         }
         ++cnt;

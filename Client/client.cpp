@@ -10,7 +10,29 @@ Client::Client(QWidget *parent)
 {
     ui->setupUi(this);
 
+    plot_->setNotAntialiasedElements(QCP::aeAll);
+    plot_->legend->setVisible(false);
+
     plot_->addGraph();
+    plot_->graph(0)->setPen(QPen(Qt::red, 1));
+
+    plot_->addGraph();
+    plot_->graph(1)->setPen(QPen(Qt::blue, 1));
+
+    plot_->addGraph();
+    plot_->graph(2)->setPen(QPen(Qt::green, 1));
+
+    plot_->addGraph();
+    plot_->graph(3)->setPen(QPen(Qt::magenta, 1));
+
+    plot_->addGraph();
+    plot_->graph(4)->setPen(QPen(Qt::cyan, 1));
+
+    for (size_t i{};i<5;++i) {
+        plot_->graph(i)->setScatterStyle(QCPScatterStyle::ssNone);  // Без точек
+        plot_->graph(i)->setLineStyle(QCPGraph::lsLine);  // Только линия
+    }
+
     ui->graphicLayout->addWidget(plot_.get());
 
     wdgts_status_css_ = {ui->wdgt_status_css1,
@@ -288,23 +310,94 @@ void Client::onReadyReadUdp() {
                 memcpy(listSignalData.data(), intArray, finalData.size());
 
                 QVector<double> SIN1, COS1, AMP1, X;
-                SIN1.reserve(listSignalData.size() / 12);
-                AMP1.reserve(listSignalData.size() / 12);
-                X.reserve(listSignalData.size() / 12);
+                QVector<double> SIN2, COS2, AMP2;
+                QVector<double> SIN3, COS3, AMP3;
+                QVector<double> SIN4, COS4, AMP4;
+                QVector<double> SIN5, COS5, AMP5;
 
-                for(int i{};i<listSignalData.size() / 12;++i) {
-                   SIN1.push_back(static_cast<short>(listSignalData[i] & 0xFFFF));
-                   COS1.push_back(static_cast<short>((listSignalData[i] >> 16) & 0xFFFF));
-                   AMP1.push_back(static_cast<float>(sqrt(10.0)*sqrt(SIN1[i] * SIN1[i]/10.0 + COS1[i] * COS1[i]/10.0)));
-                   X.push_back(i);
-               }
+                SIN1.reserve(listSignalData.size() / 5);
+                COS1.reserve(listSignalData.size() / 5);
+                AMP1.reserve(listSignalData.size() / 5);
 
-                plot_->graph(0)->setData(X, AMP1);
+                SIN2.reserve(listSignalData.size() / 5);
+                COS2.reserve(listSignalData.size() / 5);
+                AMP2.reserve(listSignalData.size() / 5);
+
+                SIN3.reserve(listSignalData.size() / 5);
+                COS3.reserve(listSignalData.size() / 5);
+                AMP3.reserve(listSignalData.size() / 5);
+
+                SIN4.reserve(listSignalData.size() / 5);
+                COS4.reserve(listSignalData.size() / 5);
+                AMP4.reserve(listSignalData.size() / 5);
+
+                SIN5.reserve(listSignalData.size() / 5);
+                COS5.reserve(listSignalData.size() / 5);
+                AMP5.reserve(listSignalData.size() / 5);
+
+                X.reserve(listSignalData.size() / 5);
+
+                int step = listSignalData.size() / 5;
+
+                for(int i{};i<listSignalData.size() / 5;++i) {
+                    SIN1.push_back(static_cast<short>(listSignalData[i+(step*0)] & 0xFFFF));
+                    COS1.push_back(static_cast<short>((listSignalData[i+(step*0)] >> 16) & 0xFFFF));
+                    AMP1.push_back(static_cast<float>(sqrt(10.0)*sqrt(SIN1[i] * SIN1[i]/10.0 + COS1[i] * COS1[i]/10.0)));
+
+                    SIN2.push_back(static_cast<short>(listSignalData[i+(step*1)] & 0xFFFF));
+                    COS2.push_back(static_cast<short>((listSignalData[i+(step*1)] >> 16) & 0xFFFF));
+                    AMP2.push_back(static_cast<float>(sqrt(10.0)*sqrt(SIN2[i] * SIN2[i]/10.0 + COS2[i] * COS2[i]/10.0)));
+
+                    SIN3.push_back(static_cast<short>(listSignalData[i+(step*2)] & 0xFFFF));
+                    COS3.push_back(static_cast<short>((listSignalData[i+(step*2)] >> 16) & 0xFFFF));
+                    AMP3.push_back(static_cast<float>(sqrt(10.0)*sqrt(SIN3[i] * SIN3[i]/10.0 + COS3[i] * COS3[i]/10.0)));
+
+                    SIN4.push_back(static_cast<short>(listSignalData[i+(step*3)] & 0xFFFF));
+                    COS4.push_back(static_cast<short>((listSignalData[i+(step*3)] >> 16) & 0xFFFF));
+                    AMP4.push_back(static_cast<float>(sqrt(10.0)*sqrt(SIN4[i] * SIN4[i]/10.0 + COS4[i] * COS4[i]/10.0)));
+
+                    SIN5.push_back(static_cast<short>(listSignalData[i+(step*4)] & 0xFFFF));
+                    COS5.push_back(static_cast<short>((listSignalData[i+(step*4)] >> 16) & 0xFFFF));
+                    AMP5.push_back(static_cast<float>(sqrt(10.0)*sqrt(SIN5[i] * SIN5[i]/10.0 + COS5[i] * COS5[i]/10.0)));
+
+                    X.push_back(i);
+                }
+
+                if (ui->wdgt_CHAN1->isChecked()) {
+                    plot_->graph(0)->setVisible(true);
+                    plot_->graph(0)->setData(X, AMP1);
+                } else {
+                    plot_->graph(0)->setVisible(false);
+                }
+                if (ui->wdgt_CHAN2->isChecked()) {
+                    plot_->graph(1)->setVisible(true);
+                    plot_->graph(1)->setData(X, AMP2);
+                } else {
+                    plot_->graph(1)->setVisible(false);
+                }
+                if (ui->wdgt_CHAN3->isChecked()) {
+                    plot_->graph(2)->setVisible(true);
+                    plot_->graph(2)->setData(X, AMP3);
+                } else {
+                    plot_->graph(2)->setVisible(false);
+                }
+                if (ui->wdgt_CHAN4->isChecked()) {
+                    plot_->graph(3)->setVisible(true);
+                    plot_->graph(3)->setData(X, AMP4);
+                } else {
+                    plot_->graph(3)->setVisible(false);
+                }
+                if (ui->wdgt_CHAN5->isChecked()) {
+                    plot_->graph(4)->setVisible(true);
+                    plot_->graph(4)->setData(X, AMP5);
+                } else {
+                    plot_->graph(4)->setVisible(false);
+                }
 
                 plot_->xAxis->rescale();
                 plot_->yAxis->rescale();
 
-                plot_->replot();
+                plot_->replot(QCustomPlot::rpQueuedReplot);
 
                 assembledImpulseData.clear();
             }
@@ -385,7 +478,7 @@ void Client::onLoadCss() {
     QByteArray payload = GROUP_DATA::command_data::serilize(cmd);
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_5_7);
+    out.setVersion(QDataStream::Qt_5_5);
     out << quint32(payload.size());
     block.append(payload);
 

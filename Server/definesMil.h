@@ -13,15 +13,15 @@
 #include "farbos/proto.h"
 
 // !!!IMITATOR!!!
-//#define IMIT
+#define IMIT
 #define PATH_HARD "/po/complex/tech_new/furke/hard.json"
 #define BUFFER_SIZE 100000
 #ifdef IMIT
     // some info: 043 -> ячейка, где лежит ОС(kpda2021),
     // як -> ячейка управления(техно. канал + канал данных)
-    #define O43_ADDR "192.168.58.100"
-    #define YAK_ADDR "192.168.58.100"
-    #define SERVER_ADDR "192.168.58.100"
+    #define O43_ADDR "192.168.1.100"
+    #define YAK_ADDR "192.168.1.100"
+    #define SERVER_ADDR "192.168.1.100"
 #else
     #define O43_ADDR "192.0.0.100"
     #define YAK_ADDR "192.0.0.115"

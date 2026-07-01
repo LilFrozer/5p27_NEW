@@ -43,7 +43,7 @@ protected:
     QTcpSocket *client_tcp_;
     GROUP_DATA::client_data client_data_;
 
-    std::vector<int> sin1{};
+    std::vector<int> chan1{}, chan2{}, chan3{}, chan4{}, chan5{};
 };
 
 enum class ApiMode : u8

@@ -303,7 +303,6 @@ void OpenApiViod::rcvLoop()
                             far_data_.status_css[i * 4 + 2] = data_in[i].word_2;
                             far_data_.status_css[i * 4 + 3] = data_in[i].word_3;
                         }
-#ifndef IMIT
                         for (size_t i{}; i < 3; i++) {
                             for (size_t j{}; j < 8; j++) {
                                 far_data_.status_sum[i][j * 4 + 0] = data_in[4 + i * 8 + j].word_0;
@@ -312,7 +311,6 @@ void OpenApiViod::rcvLoop()
                                 far_data_.status_sum[i][j * 4 + 3] = data_in[4 + i * 8 + j].word_3;
                             }
                         }
-#endif
                         Server::instance().processData();
                         break;
                     }

@@ -135,14 +135,26 @@ void Server::processData() {
     this->sendData(0);
     this->sendData(1);
 
-    sin1.reserve(Executor::instance().get_far_data().ki_kd);
+    chan1.reserve(Executor::instance().get_far_data().ki_kd);
+    chan2.reserve(Executor::instance().get_far_data().ki_kd);
+    chan3.reserve(Executor::instance().get_far_data().ki_kd);
+    chan4.reserve(Executor::instance().get_far_data().ki_kd);
+    chan5.reserve(Executor::instance().get_far_data().ki_kd);
     for (size_t i{};i<Executor::instance().get_far_data().ki_kd;++i) {
-        sin1.push_back(Executor::instance().get_far_data().channel1[i]);
+        chan1.push_back(Executor::instance().get_far_data().channel1[i]);
+        chan2.push_back(Executor::instance().get_far_data().channel2[i]);
+        chan3.push_back(Executor::instance().get_far_data().channel3[i]);
+        chan4.push_back(Executor::instance().get_far_data().channel4[i]);
+        chan5.push_back(Executor::instance().get_far_data().channel5[i]);
     }
 
     this->sendData(2);
 
-    sin1.clear();
+    chan1.clear();
+    chan2.clear();
+    chan3.clear();
+    chan4.clear();
+    chan5.clear();
 }
 
 void Server::sendData(uint8_t idData) {
@@ -195,7 +207,7 @@ void Server::sendData(uint8_t idData) {
     }
     case 2:
     {
-        const quint32 n = 12u;
+        const quint32 n = 5u;
         if (n == 0)
         {
             src = nullptr;
@@ -203,21 +215,14 @@ void Server::sendData(uint8_t idData) {
             break;
         }
         // все одинаковой длины
-        const quint32 len = static_cast<quint32>(sin1.size());
+        const quint32 len = static_cast<quint32>(chan1.size());
         int* d = needBuf(size_t(n) * len);
         int* p = d;
-        p = std::copy(sin1.begin(), sin1.end(), p);
-        p = std::copy(sin1.begin(), sin1.end(), p);
-        p = std::copy(sin1.begin(), sin1.end(), p);
-        p = std::copy(sin1.begin(), sin1.end(), p);
-        p = std::copy(sin1.begin(), sin1.end(), p);
-        p = std::copy(sin1.begin(), sin1.end(), p);
-        p = std::copy(sin1.begin(), sin1.end(), p);
-        p = std::copy(sin1.begin(), sin1.end(), p);
-        p = std::copy(sin1.begin(), sin1.end(), p);
-        p = std::copy(sin1.begin(), sin1.end(), p);
-        p = std::copy(sin1.begin(), sin1.end(), p);
-        p = std::copy(sin1.begin(), sin1.end(), p);
+        p = std::copy(chan1.begin(), chan1.end(), p);
+        p = std::copy(chan2.begin(), chan2.end(), p);
+        p = std::copy(chan3.begin(), chan3.end(), p);
+        p = std::copy(chan4.begin(), chan4.end(), p);
+        p = std::copy(chan5.begin(), chan5.end(), p);
         src = d; size_DATA = (quint32)((p - d) * sizeof(int));
         break;
     }
