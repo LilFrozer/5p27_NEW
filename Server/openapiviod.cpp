@@ -1,4 +1,5 @@
 #include "openapiviod.h"
+#include "executor.h"
 
 OpenApiViod::OpenApiViod() : send_buf_{std::make_unique<unsigned[]>(1472)}, recv_buf_{std::make_unique<unsigned[]>(1472)}
 {
@@ -185,32 +186,117 @@ void OpenApiViod::rcvLoop()
         while(header->data_head.cmd != 0x07 && m_running)
         {
             auto size = RecvUdpBE(recv_buf_.get(), 1472 / 4);
-
-            if(size == 0)
-            {
-                qDebug() << "Receive error or timeout:" << (size < 0 ? strerror(errno) : "no data");
+            if(size == 0) {
+                qDebug() << "[OpenApiViod]Receive error or timeout:" << (size < 0 ? strerror(errno) : "no data");
                 continue;
             }
-
-            if(header->info_head.cmd == 0x86)
-            {
+            if(header->info_head.cmd == 0x86) {
 //                wait_msgs -= header->info_head.Delta_num;
 //                qDebug() << "header->info_head.CMD == 0x86";
             }
-
-            else if(header->data_head.cmd == 0x07)
-            {
+            else if(header->data_head.cmd == 0x07) {
                 auto full_header = reinterpret_cast<OPEN_API_VIOD::ViodFullFrame*>(recv_buf_.get());
                 auto data_in = reinterpret_cast<qword*>(full_header + 1);
 
-                if(full_header->viod_header.addr_info.dmid == 0)
-                {
+                if (full_header->viod_header.addr_info.dmid == 0) {
                     length = full_header->viod_header.length;
-                    proto_farbos::farbos_header *h = reinterpret_cast<proto_farbos::farbos_header*>(&data_in[0]);
-                    switch(static_cast<uint8_t>(h->tk))
-                    {
-                    case 13:
-                    {
+                    switch (full_header->viod_header.chid) {
+                    case 0: {
+                        static std::vector<qword> buffer;
+                        for (u32 i{};i<length;++i) {
+                            buffer.push_back(data_in[i]);
+                        }
+                        if (full_header->viod_header.f != 1 && full_header->viod_header.e == 1) {
+                            far_data_.ki_kd = buffer.size() * 4;
+                            qDebug() << "[OpenApiViod]FullSizeData1=" << buffer.size();
+                            for (u32 i{};i<buffer.size();++i) {
+                                far_data_.channel1[i*4] = buffer[i].word_0;
+                                far_data_.channel1[i*4+1] = buffer[i].word_1;
+                                far_data_.channel1[i*4+2] = buffer[i].word_2;
+                                far_data_.channel1[i*4+3] = buffer[i].word_3;
+                            }
+                            buffer.clear();
+                        }
+                        Server::instance().processData();
+                        break;
+                    }
+                    case 1: {
+                        static std::vector<qword> buffer;
+                        for (u32 i{};i<length;++i) {
+                            buffer.push_back(data_in[i]);
+                        }
+                        if (full_header->viod_header.f != 1 && full_header->viod_header.e == 1) {
+                            far_data_.ki_kd = buffer.size() * 4;
+                            qDebug() << "[OpenApiViod]FullSizeData2=" << buffer.size();
+                            for (u32 i{};i<buffer.size();++i) {
+                                far_data_.channel2[i*4] = buffer[i].word_0;
+                                far_data_.channel2[i*4+1] = buffer[i].word_1;
+                                far_data_.channel2[i*4+2] = buffer[i].word_2;
+                                far_data_.channel2[i*4+3] = buffer[i].word_3;
+                            }
+                            buffer.clear();
+                        }
+                        Server::instance().processData();
+                        break;
+                    }
+                    case 2: {
+                        static std::vector<qword> buffer;
+                        for (u32 i{};i<length;++i) {
+                            buffer.push_back(data_in[i]);
+                        }
+                        if (full_header->viod_header.f != 1 && full_header->viod_header.e == 1) {
+                            far_data_.ki_kd = buffer.size() * 4;
+                            qDebug() << "[OpenApiViod]FullSizeData3=" << buffer.size();
+                            for (u32 i{};i<buffer.size();++i) {
+                                far_data_.channel3[i*4] = buffer[i].word_0;
+                                far_data_.channel3[i*4+1] = buffer[i].word_1;
+                                far_data_.channel3[i*4+2] = buffer[i].word_2;
+                                far_data_.channel3[i*4+3] = buffer[i].word_3;
+                            }
+                            buffer.clear();
+                        }
+                        Server::instance().processData();
+                        break;
+                    }
+                    case 3: {
+                        static std::vector<qword> buffer;
+                        for (u32 i{};i<length;++i) {
+                            buffer.push_back(data_in[i]);
+                        }
+                        if (full_header->viod_header.f != 1 && full_header->viod_header.e == 1) {
+                            far_data_.ki_kd = buffer.size() * 4;
+                            qDebug() << "[OpenApiViod]FullSizeData4=" << buffer.size();
+                            for (u32 i{};i<buffer.size();++i) {
+                                far_data_.channel4[i*4] = buffer[i].word_0;
+                                far_data_.channel4[i*4+1] = buffer[i].word_1;
+                                far_data_.channel4[i*4+2] = buffer[i].word_2;
+                                far_data_.channel4[i*4+3] = buffer[i].word_3;
+                            }
+                            buffer.clear();
+                        }
+                        Server::instance().processData();
+                        break;
+                    }
+                    case 4: {
+                        static std::vector<qword> buffer;
+                        for (u32 i{};i<length;++i) {
+                            buffer.push_back(data_in[i]);
+                        }
+                        if (full_header->viod_header.f != 1 && full_header->viod_header.e == 1) {
+                            far_data_.ki_kd = buffer.size() * 4;
+                            qDebug() << "[OpenApiViod]FullSizeData5=" << buffer.size();
+                            for (u32 i{};i<buffer.size();++i) {
+                                far_data_.channel2[i*4] = buffer[i].word_0;
+                                far_data_.channel2[i*4+1] = buffer[i].word_1;
+                                far_data_.channel2[i*4+2] = buffer[i].word_2;
+                                far_data_.channel2[i*4+3] = buffer[i].word_3;
+                            }
+                            buffer.clear();
+                        }
+                        Server::instance().processData();
+                        break;
+                    }
+                    case 5: {
                         for (size_t i{}; i < 4; i++) {
                             far_data_.status_css[i * 4 + 0] = data_in[i].word_0;
                             far_data_.status_css[i * 4 + 1] = data_in[i].word_1;
@@ -227,55 +313,15 @@ void OpenApiViod::rcvLoop()
                             }
                         }
 #endif
+                        Server::instance().processData();
                         break;
                     }
-                    default:
-                    {
-                        static std::vector<qword> buffer;
-
-                        qDebug() << "FB[rcv DATA]: length ->" << length;
-
-//                        static int cnt = 0;
-
-                        for (int i=0;i<length;++i)
-                            buffer.push_back(data_in[i]);
-
-//                        for(size_t i{};i<length;++i)
-//                        {
-//                            qDebug() << "[rcv]0x" << QString("%1").arg(data_in[i].word_0, 8, 16, QChar('0')) << " "
-//                                << "0x" << QString("%1").arg(data_in[i].word_1, 8, 16, QChar('0')) << " "
-//                                << "0x" << QString("%1").arg(data_in[i].word_2, 8, 16, QChar('0')) << " "
-//                                << "0x" << QString("%1").arg(data_in[i].word_3, 8, 16, QChar('0'));
-//                        }
-
-                        if (full_header->viod_header.f == 1 && full_header->viod_header.e != 1)
-                            qDebug() << "first!";
-
-                        if (full_header->viod_header.f != 1 && full_header->viod_header.e == 1)
-                        {
-                            far_data_.ki_kd = buffer.size() * 4;
-                            qDebug() << "last! buffer.size=" << buffer.size();
-//                            if (cnt > 5) {
-                                for (size_t i{};i<buffer.size();++i)
-                                {
-                                    far_data_.channel1[i*4] = buffer[i].word_0;
-                                    far_data_.channel1[i*4+1] = buffer[i].word_1;
-                                    far_data_.channel1[i*4+2] = buffer[i].word_2;
-                                    far_data_.channel1[i*4+3] = buffer[i].word_3;
-                                }
-//                            }
-//                            ++cnt;
-                            buffer.clear();
-                        }
-                        break;
-                    }
+                    default: qDebug() << "[OpenApiViod]???"; break;
                     }
                 }
             }
-
-            else
-            {
-                qDebug() << "Unexpected packet type, size bytes = " << size;
+            else {
+                qDebug() << "[OpenApiViod]Unexpected packet type, size bytes = " << size;
             }
         }
     }

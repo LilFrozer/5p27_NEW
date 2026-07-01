@@ -13,7 +13,7 @@
 #include "farbos/proto.h"
 
 // !!!IMITATOR!!!
-#define IMIT
+//#define IMIT
 #define PATH_HARD "/po/complex/tech_new/furke/hard.json"
 #define BUFFER_SIZE 100000
 #ifdef IMIT

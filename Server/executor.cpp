@@ -39,6 +39,8 @@ void Server::doStart()
         qDebug() << "Started listen tcp...";
     else
         throw std::runtime_error("error listen tcp...");
+    server_udp_->setSocketOption(QAbstractSocket::SendBufferSizeSocketOption, QVariant(1024 * 1024 * 4));
+    server_udp_->setSocketOption(QAbstractSocket::ReceiveBufferSizeSocketOption, QVariant(1024 * 1024 * 4));
     if (server_udp_->bind(QHostAddress(SERVER_ADDR), Constants::SERVER_PORT))
         qDebug() << "Started listen udp...";
     else
@@ -49,10 +51,8 @@ Server::Server(QObject *parent) :
     QObject{parent}
     , server_tcp_{std::make_unique<QTcpServer>(this)}
     , server_udp_{std::make_unique<QUdpSocket>(this)}
-    , process_data_timer_{std::make_unique<QTimer>(this)}
 {
     QObject::connect(server_tcp_.get(), &QTcpServer::newConnection, this, &Server::onConnected);
-    QObject::connect(process_data_timer_.get(), &QTimer::timeout, this, &Server::processData);
 }
 
 void Server::onConnected()
@@ -112,7 +112,6 @@ void Server::onReadyRead()
             "loadStart",
             Qt::QueuedConnection
         );
-        this->process_data_timer_->start(100);
     } else if (data.cmd == "stop") {
         QMetaObject::invokeMethod
         (
@@ -120,7 +119,6 @@ void Server::onReadyRead()
             "loadStop",
             Qt::QueuedConnection
         );
-        this->process_data_timer_->stop();
     } else if (data.cmd == "loadNewKu") {
         QMetaObject::invokeMethod
         (
@@ -134,13 +132,13 @@ void Server::onReadyRead()
 }
 
 void Server::processData() {
-//    qDebug() << "processData!";
     this->sendData(0);
     this->sendData(1);
 
     sin1.reserve(Executor::instance().get_far_data().ki_kd);
-    for (size_t i{};i<Executor::instance().get_far_data().ki_kd;++i)
+    for (size_t i{};i<Executor::instance().get_far_data().ki_kd;++i) {
         sin1.push_back(Executor::instance().get_far_data().channel1[i]);
+    }
 
     this->sendData(2);
 

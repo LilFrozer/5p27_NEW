@@ -28,6 +28,7 @@ public:
     static Server &instance();
     void doStart();
     void sendData(uint8_t idData);
+    void processData();
     static QByteArray compressData(const char* data, int size);
 private:
     explicit Server(QObject *parent = nullptr);
@@ -36,16 +37,13 @@ public slots:
     void onConnected();
     void onReadyRead();
     void onDisconnected();
-private slots:
-    void processData();
 protected:
     std::unique_ptr<QTcpServer> server_tcp_;
     std::unique_ptr<QUdpSocket> server_udp_;
     QTcpSocket *client_tcp_;
     GROUP_DATA::client_data client_data_;
-    std::unique_ptr<QTimer> process_data_timer_;
 
-    QVector<int> sin1{};
+    std::vector<int> sin1{};
 };
 
 enum class ApiMode : u8
