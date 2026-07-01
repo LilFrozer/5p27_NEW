@@ -8,6 +8,8 @@
 #include <unordered_map>
 #include "lib/libdspapi.h"
 #include <fstream>
+#include "fpga_regs.h"
+#include "viodImit.h"
 
 #include <QTcpServer>
 #include <QTcpSocket>
@@ -46,6 +48,12 @@ protected:
     QVector<int> sin1{};
 };
 
+enum class ApiMode : u8
+{
+    DspApi = 0x0,
+    OpenApi = 0x1
+};
+
 class Executor : public QObject
 {
     Q_OBJECT
@@ -65,9 +73,13 @@ public slots:
     void loadNewKu(int ki, int ns);
 private:
     std::unique_ptr<fpga_regs::fpga_mem_summator> fpga_regs_;
+    int bus_vme_desrptr_ = 0;
 
+#ifdef IMIT
+    std::unique_ptr<ViodImit> viod_imit_;
+#endif
     ApiMode mode_{ApiMode::OpenApi};
-    std::unique_ptr<ViodSender> viodSender_;
+    std::unique_ptr<IViodSender> viodSender_;
 
     TS::signal tsTable_[Constants::MAX_KNS]{};
 

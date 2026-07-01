@@ -13,6 +13,8 @@ using u8 = uint8_t;
 
 namespace proto_farbos {
 
+const u16 CNT_SUMMATOR_LINES = 20;
+
 struct farbos_header
 {
     u32 dk : 20;
@@ -165,8 +167,8 @@ struct frame_upr_sum
 
     u32 res6{0};
 
-    Koef koefCor[Constants::CNT_SUMMATOR_LINES]{};
-    SinCos sinCos[Constants::CNT_SUMMATOR_LINES]{};
+    Koef koefCor[CNT_SUMMATOR_LINES]{};
+    SinCos sinCos[CNT_SUMMATOR_LINES]{};
 };
 
 static std::string extract14BytesToHex(unsigned long* pdata, int byteOffset) {
@@ -214,22 +216,3 @@ static u16 Calc_CRC(std::vector<u8> &bytes) {
 }
 
 }
-
-#define BUFFER_SIZE 100000
-struct far_data
-{
-    u32 status_css[16]{};
-    u32 status_sum[3][32]{};
-    u32 ki_kd{};
-    std::vector<u32> channel1{};
-    std::vector<u32> channel2{};
-    std::vector<u32> channel3{};
-    std::vector<u32> channel4{};
-    std::vector<u32> channel5{};
-    far_data() :
-        channel1(BUFFER_SIZE, 0),
-        channel2(BUFFER_SIZE, 0),
-        channel3(BUFFER_SIZE, 0),
-        channel4(BUFFER_SIZE, 0),
-        channel5(BUFFER_SIZE, 0) {}
-};

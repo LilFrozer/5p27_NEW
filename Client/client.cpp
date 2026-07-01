@@ -138,12 +138,6 @@ Client::Client(QWidget *parent)
     QObject::connect(socket_.get(), &QTcpSocket::connected, this, &Client::onConnected);
     QObject::connect(socket_.get(), &QTcpSocket::disconnected, this, &Client::onDisconnected);
     QObject::connect(socket_.get(), &QTcpSocket::readyRead, this, &Client::onReadyRead);
-
-    udp_socket_ = std::make_unique<QUdpSocket>(this);
-    QObject::connect(udp_socket_.get(), &QUdpSocket::readyRead, this, &Client::onReadyReadUdp);
-    if (udp_socket_->bind(QHostAddress("190.0.3.102"), 2999)) {
-        qDebug() << "udp`s opened";
-    }
 }
 
 Client::~Client()
@@ -152,17 +146,26 @@ Client::~Client()
 }
 
 void Client::onConnect() {
-    socket_->connectToHost(QHostAddress("190.0.3.34"), 1212);
+    u16 port = ui->wdgt_server_port->text().toUInt();
+    socket_->connectToHost(QHostAddress(ui->wdgt_server_addr->text()), port);
+    QTimer::singleShot(2000, [this]() {
+        if (socket_->state() == QAbstractSocket::ConnectingState) {
+            socket_->abort();
+            qDebug() << "Connection timeout";
+        }
+    });
 }
 
 void Client::onConnected() {
     qDebug() << "Подключено к серверу!";
+    ui->wdgt_connect->setEnabled(false);
 }
 
 void Client::onDisconnected() {
     qDebug() << "Отключено от сервера!";
-//    udp_socket_->close();
-//    udp_socket_.reset();
+    udp_socket_->close();
+    udp_socket_.reset();
+    ui->wdgt_connect->setEnabled(true);
 }
 
 void Client::onReadyRead() {
@@ -175,8 +178,15 @@ void Client::onReadyRead() {
 
     // Теперь у нас есть полное сообщение
     GROUP_DATA::client_data data = GROUP_DATA::client_data::deserialize(payload);
-    qDebug() << "Получены данные: IP =" << QString::fromStdString(data.ip)
-             << "порт =" << data.port;
+    qDebug() << "Getting data...: IP =" << QString::fromStdString(data.ip)
+             << "port =" << data.port;
+
+    udp_socket_ = std::make_unique<QUdpSocket>(this);
+    QObject::connect(udp_socket_.get(), &QUdpSocket::readyRead, this, &Client::onReadyReadUdp);
+    if (udp_socket_->bind(QHostAddress(QString::fromStdString(data.ip)), data.port))
+        qDebug() << "udp`s opened...";
+    else
+        throw std::runtime_error("error .. bad bind udp..");
 }
 
 void Client::onReadyReadUdp() {
@@ -395,7 +405,7 @@ void Client::onStart() {
     QByteArray payload = GROUP_DATA::command_data::serilize(cmd);
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_5_7);
+    out.setVersion(QDataStream::Qt_5_5);
     out << quint32(payload.size());
     block.append(payload);
 
@@ -415,7 +425,7 @@ void Client::onStop() {
     QByteArray payload = GROUP_DATA::command_data::serilize(cmd);
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_5_7);
+    out.setVersion(QDataStream::Qt_5_5);
     out << quint32(payload.size());
     block.append(payload);
 
@@ -435,7 +445,7 @@ void Client::onSendKu() {
     QByteArray payload = GROUP_DATA::command_data::serilize(cmd);
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_5_7);
+    out.setVersion(QDataStream::Qt_5_5);
     out << quint32(payload.size());
     block.append(payload);
 

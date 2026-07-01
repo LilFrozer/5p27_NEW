@@ -35,10 +35,14 @@ void Server::startSVthread()
 
 void Server::doStart()
 {
-    if (server_tcp_->listen(QHostAddress(SERVER_ADDR), 1212))
+    if (server_tcp_->listen(QHostAddress(SERVER_ADDR), Constants::SERVER_PORT))
         qDebug() << "Started listen tcp...";
-    if (server_udp_->bind(QHostAddress(SERVER_ADDR), 1212))
+    else
+        throw std::runtime_error("error listen tcp...");
+    if (server_udp_->bind(QHostAddress(SERVER_ADDR), Constants::SERVER_PORT))
         qDebug() << "Started listen udp...";
+    else
+        throw std::runtime_error("error bind udp...");
 }
 
 Server::Server(QObject *parent) :
@@ -146,6 +150,9 @@ void Server::processData() {
 void Server::sendData(uint8_t idData) {
     if (idData == 2 && Executor::instance().get_far_data().ki_kd == 0) return;
 
+    QString addr = QString::fromStdString(client_data_.ip);
+    u16 port = client_data_.port;
+
     static std::vector<int> txBuf_;
     auto makeHeaderFunc = [&](quint32 total, quint32 num, quint32 cnt, quint32 cur, bool first, bool last)
     {
@@ -250,15 +257,29 @@ void Server::sendData(uint8_t idData) {
         w += sizeof(idData);
         memcpy(w, dataToSend.constData() + MAX_PAY*idx, chunk);
 
-        qint64 bytesSent = server_udp_->writeDatagram(payload,
-                                    QHostAddress("190.0.3.102"), 2999);
+        qint64 bytesSent = server_udp_->writeDatagram(payload, QHostAddress(addr), port);
         if (bytesSent == -1)
             qDebug() << "Error_udp:" << server_udp_->errorString();
     }
 }
 
+Executor::Executor(QObject *parent, ApiMode mode) : QObject{parent}, fpga_regs_{std::make_unique<fpga_regs::fpga_mem_summator>()}
+{
+#ifdef IMIT
+    viod_imit_ = std::make_unique<ViodImit>();
+#endif
+    mode_ = mode;
+    switch(mode_)
+    {
+    case ApiMode::DspApi: break;
+    case ApiMode::OpenApi: viodSender_ = std::make_unique<OpenApiViod>(); break;
+    default: throw std::runtime_error("bad...");
+    }
+}
+
 void Executor::init_fpga_regs()
 {
+#ifndef IMIT
     auto *regs = this->fpga_regs_.get();
 
     regs->dir_tx[0].dir_tx = 0;
@@ -311,27 +332,28 @@ void Executor::init_fpga_regs()
     regs->mask_devices = 0x7e;
 
     unii_init("192.0.1.101", "192.0.1.101", true);
-    BUS_VME_DESCRIPTOR = unii_open((char*)"/devices/hla");
+    bus_vme_desrptr_ = unii_open((char*)"/devices/hla");
 
-    unii_write_reg(BUS_VME_DESCRIPTOR, 0x0, static_cast<u32>(0));
-    unii_write_reg(BUS_VME_DESCRIPTOR, 0x0, static_cast<u32>(1));
+    unii_write_reg(bus_vme_desrptr_, 0x0, static_cast<u32>(0));
+    unii_write_reg(bus_vme_desrptr_, 0x0, static_cast<u32>(1));
 
-    unii_write_reg(BUS_VME_DESCRIPTOR, 0x4000, static_cast<u32>(0));
-    unii_write_reg(BUS_VME_DESCRIPTOR, 0x4000, static_cast<u32>(1));
+    unii_write_reg(bus_vme_desrptr_, 0x4000, static_cast<u32>(0));
+    unii_write_reg(bus_vme_desrptr_, 0x4000, static_cast<u32>(1));
 
     QThread::msleep(200);
 
-    unii_write_reg(BUS_VME_DESCRIPTOR, fpga_regs::FPGAREG_FARBOS_CNTR, static_cast<u32>(0));
-    unii_write_reg(BUS_VME_DESCRIPTOR, fpga_regs::FPGAREG_FARBOS_CNTR, static_cast<u32>(1));
+    unii_write_reg(bus_vme_desrptr_, fpga_regs::FPGAREG_FARBOS_CNTR, static_cast<u32>(0));
+    unii_write_reg(bus_vme_desrptr_, fpga_regs::FPGAREG_FARBOS_CNTR, static_cast<u32>(1));
 
     QThread::msleep(200);
 
     auto *ptr_ = reinterpret_cast<u32*>(this->fpga_regs_.get()) + fpga_regs::SHIFT_DIR_TX;
     for (u32 i{};i<fpga_regs::amount_regs_summator-fpga_regs::SHIFT_DIR_TX;++i) {
-        int err = unii_write_reg(BUS_VME_DESCRIPTOR, fpga_regs::FPGAREG_FARBOS_DIR_TX+i, ptr_[i]);
+        int err = unii_write_reg(bus_vme_desrptr_, fpga_regs::FPGAREG_FARBOS_DIR_TX+i, ptr_[i]);
         if (err == -1)
             throw std::runtime_error("error unii_write");
     }
+#endif
 }
 
 void Executor::loadTS(const std::string &fullpath)
@@ -393,17 +415,6 @@ void Executor::loadStop() {
     int DLID = 1;
     int CHID = 3;
     viodSender_->sendViodMsg(config, 0, 0, 0, DMID, 1, DLID, CHID);
-}
-
-Executor::Executor(QObject *parent, ApiMode mode) : QObject{parent}, fpga_regs_{std::make_unique<fpga_regs::fpga_mem_summator>()}
-{
-    mode_ = mode;
-    switch(mode_)
-    {
-    case ApiMode::DspApi: break;
-    case ApiMode::OpenApi: viodSender_ = std::make_unique<OpenApiViod>(this); break;
-    default: throw std::runtime_error("bad...");
-    }
 }
 
 void Executor::loadCss()

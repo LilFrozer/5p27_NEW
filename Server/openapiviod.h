@@ -2,11 +2,6 @@
 #define OPENAPIVIOD_H
 
 #include "definesMil.h"
-#include <fcntl.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <unistd.h>
-#include "farbos/proto.h"
 
 namespace OPEN_API_VIOD
 {
@@ -70,28 +65,30 @@ struct ViodFullFrame
 
 }
 
-class OpenApiViod : public ViodSender
+class OpenApiViod : public IViodSender
 {
-    Q_OBJECT
-protected:
+private:
+    std::thread m_thread;
+    std::atomic<bool> m_running{true};
+
     std::unique_ptr<u32[]> send_buf_;
     std::unique_ptr<u32[]> recv_buf_;
 
     // --- host ---
-    int o43_sock_ = 0;
+    int o43_sock_{-1};
     std::string s_o43_addr_{O43_ADDR};
-    u16 o43_port{10000};
+    u16 o43_port{Constants::O43_PORT};
     sockaddr_in o43addr_{};
 
     std::string s_yak_addr_{YAK_ADDR};
-    u16 yak_port_{10001};
+    u16 yak_port_{Constants::YAK_PORT};
     sockaddr_in yakaddr_{};
 
     // --- data from far ---
     far_data far_data_{};
 public:
-    explicit OpenApiViod(QObject *parent = nullptr);
-    virtual ~OpenApiViod();
+    OpenApiViod();
+    virtual ~OpenApiViod() override;
     void sendViodMsg(std::vector<qword> &data,
                      const u16 smid,
                      const u16 spid,

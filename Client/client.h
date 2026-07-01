@@ -9,6 +9,7 @@
 #include "groupData.h"
 #include "zstd.h"
 #include <memory>
+#include <QTimer>
 
 QT_BEGIN_NAMESPACE
 namespace Ui
