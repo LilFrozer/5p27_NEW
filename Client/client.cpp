@@ -241,7 +241,7 @@ void Client::onReadyReadUdp() {
 
         switch (packet.m_int_dataType_)
         {
-        case 0x0: {
+        case UDP_DATA::STATUS_CSS: {
             static QByteArray assembledStatusCssData;
             this->status_css_.clear();
             assembledStatusCssData.append(packet.m_data_);
@@ -261,7 +261,7 @@ void Client::onReadyReadUdp() {
             assembledStatusCssData.clear();
             break;
         }
-        case 0x1: {
+        case UDP_DATA::STATUS_SUM: {
             static QByteArray assembledStatusSumData;
             this->status_sum_.clear();
             assembledStatusSumData.append(packet.m_data_);
@@ -287,7 +287,7 @@ void Client::onReadyReadUdp() {
             assembledStatusSumData.clear();
             break;
         }
-        case 0x2: {
+        case UDP_DATA::CHANNEL_DATA1: {
             static QByteArray assembledImpulseData;
 
             QVector<int> listSignalData;
@@ -309,87 +309,261 @@ void Client::onReadyReadUdp() {
                 listSignalData.resize(static_cast<int>(dataSizeInInts));
                 memcpy(listSignalData.data(), intArray, finalData.size());
 
-                QVector<double> SIN1, COS1, AMP1, X;
-                QVector<double> SIN2, COS2, AMP2;
-                QVector<double> SIN3, COS3, AMP3;
-                QVector<double> SIN4, COS4, AMP4;
-                QVector<double> SIN5, COS5, AMP5;
+                x1.reserve(listSignalData.size());
+                sin1.reserve(listSignalData.size());
+                cos1.reserve(listSignalData.size());
+                amp1.reserve(listSignalData.size());
 
-                SIN1.reserve(listSignalData.size() / 5);
-                COS1.reserve(listSignalData.size() / 5);
-                AMP1.reserve(listSignalData.size() / 5);
-
-                SIN2.reserve(listSignalData.size() / 5);
-                COS2.reserve(listSignalData.size() / 5);
-                AMP2.reserve(listSignalData.size() / 5);
-
-                SIN3.reserve(listSignalData.size() / 5);
-                COS3.reserve(listSignalData.size() / 5);
-                AMP3.reserve(listSignalData.size() / 5);
-
-                SIN4.reserve(listSignalData.size() / 5);
-                COS4.reserve(listSignalData.size() / 5);
-                AMP4.reserve(listSignalData.size() / 5);
-
-                SIN5.reserve(listSignalData.size() / 5);
-                COS5.reserve(listSignalData.size() / 5);
-                AMP5.reserve(listSignalData.size() / 5);
-
-                X.reserve(listSignalData.size() / 5);
-
-                int step = listSignalData.size() / 5;
-
-                for(int i{};i<listSignalData.size() / 5;++i) {
-                    SIN1.push_back(static_cast<short>(listSignalData[i+(step*0)] & 0xFFFF));
-                    COS1.push_back(static_cast<short>((listSignalData[i+(step*0)] >> 16) & 0xFFFF));
-                    AMP1.push_back(static_cast<float>(sqrt(10.0)*sqrt(SIN1[i] * SIN1[i]/10.0 + COS1[i] * COS1[i]/10.0)));
-
-                    SIN2.push_back(static_cast<short>(listSignalData[i+(step*1)] & 0xFFFF));
-                    COS2.push_back(static_cast<short>((listSignalData[i+(step*1)] >> 16) & 0xFFFF));
-                    AMP2.push_back(static_cast<float>(sqrt(10.0)*sqrt(SIN2[i] * SIN2[i]/10.0 + COS2[i] * COS2[i]/10.0)));
-
-                    SIN3.push_back(static_cast<short>(listSignalData[i+(step*2)] & 0xFFFF));
-                    COS3.push_back(static_cast<short>((listSignalData[i+(step*2)] >> 16) & 0xFFFF));
-                    AMP3.push_back(static_cast<float>(sqrt(10.0)*sqrt(SIN3[i] * SIN3[i]/10.0 + COS3[i] * COS3[i]/10.0)));
-
-                    SIN4.push_back(static_cast<short>(listSignalData[i+(step*3)] & 0xFFFF));
-                    COS4.push_back(static_cast<short>((listSignalData[i+(step*3)] >> 16) & 0xFFFF));
-                    AMP4.push_back(static_cast<float>(sqrt(10.0)*sqrt(SIN4[i] * SIN4[i]/10.0 + COS4[i] * COS4[i]/10.0)));
-
-                    SIN5.push_back(static_cast<short>(listSignalData[i+(step*4)] & 0xFFFF));
-                    COS5.push_back(static_cast<short>((listSignalData[i+(step*4)] >> 16) & 0xFFFF));
-                    AMP5.push_back(static_cast<float>(sqrt(10.0)*sqrt(SIN5[i] * SIN5[i]/10.0 + COS5[i] * COS5[i]/10.0)));
-
-                    X.push_back(i);
+                for(int i{};i<listSignalData.size();++i) {
+                    sin1.push_back(static_cast<short>(listSignalData[i] & 0xFFFF));
+                    cos1.push_back(static_cast<short>((listSignalData[i] >> 16) & 0xFFFF));
+                    amp1.push_back(static_cast<float>(sqrt(10.0)*sqrt(sin1[i] * sin1[i]/10.0 + cos1[i] * cos1[i]/10.0)));
+                    x1.push_back(i);
                 }
 
                 if (ui->wdgt_CHAN1->isChecked()) {
                     plot_->graph(0)->setVisible(true);
-                    plot_->graph(0)->setData(X, AMP1);
+                    plot_->graph(0)->setData(x1, amp1);
                 } else {
                     plot_->graph(0)->setVisible(false);
                 }
+
+                plot_->xAxis->rescale();
+                plot_->yAxis->rescale();
+
+                plot_->replot(QCustomPlot::rpQueuedReplot);
+
+                x1.clear();
+                sin1.clear();
+                cos1.clear();
+                amp1.clear();
+
+                assembledImpulseData.clear();
+            }
+            if ((!isFirst && !isLast) || (isFirst && !isLast))
+            {
+                assembledImpulseData.append(packet.m_data_);
+            }
+
+            break;
+        }
+        case UDP_DATA::CHANNEL_DATA2: {
+            static QByteArray assembledImpulseData;
+
+            QVector<int> listSignalData;
+            listSignalData.reserve(packet.m_header_.m_int_totalDataSize_/sizeof(int));
+
+            const bool isFirst = packet.m_header_.m_flags_.m_boolean_isFirst_;
+            const bool isLast = packet.m_header_.m_flags_.m_boolean_isLast_;
+            if ((!isFirst && isLast) || (isFirst && isLast))
+            {
+                assembledImpulseData.append(packet.m_data_);
+                QByteArray finalData;
+                if (packet.m_header_.m_flags_.m_boolean_isCompressed)
+                    finalData = decompressData(assembledImpulseData);
+                else
+                    finalData = assembledImpulseData;
+
+                const int* intArray = reinterpret_cast<const int*>(finalData.constData());
+                const quint32 dataSizeInInts = finalData.size() / sizeof(int);
+                listSignalData.resize(static_cast<int>(dataSizeInInts));
+                memcpy(listSignalData.data(), intArray, finalData.size());
+
+                x2.reserve(listSignalData.size());
+                sin2.reserve(listSignalData.size());
+                cos2.reserve(listSignalData.size());
+                amp2.reserve(listSignalData.size());
+
+                for(int i{};i<listSignalData.size();++i) {
+                    sin2.push_back(static_cast<short>(listSignalData[i] & 0xFFFF));
+                    cos2.push_back(static_cast<short>((listSignalData[i] >> 16) & 0xFFFF));
+                    amp2.push_back(static_cast<float>(sqrt(10.0)*sqrt(sin2[i] * sin2[i]/10.0 + cos2[i] * cos2[i]/10.0)));
+                    x2.push_back(i);
+                }
+
                 if (ui->wdgt_CHAN2->isChecked()) {
                     plot_->graph(1)->setVisible(true);
-                    plot_->graph(1)->setData(X, AMP2);
+                    plot_->graph(1)->setData(x2, amp2);
                 } else {
                     plot_->graph(1)->setVisible(false);
                 }
+
+                plot_->xAxis->rescale();
+                plot_->yAxis->rescale();
+
+                plot_->replot(QCustomPlot::rpQueuedReplot);
+
+                x2.clear();
+                sin2.clear();
+                cos2.clear();
+                amp2.clear();
+
+                assembledImpulseData.clear();
+            }
+            if ((!isFirst && !isLast) || (isFirst && !isLast))
+            {
+                assembledImpulseData.append(packet.m_data_);
+            }
+
+            break;
+        }
+        case UDP_DATA::CHANNEL_DATA3: {
+            static QByteArray assembledImpulseData;
+
+            QVector<int> listSignalData;
+            listSignalData.reserve(packet.m_header_.m_int_totalDataSize_/sizeof(int));
+
+            const bool isFirst = packet.m_header_.m_flags_.m_boolean_isFirst_;
+            const bool isLast = packet.m_header_.m_flags_.m_boolean_isLast_;
+            if ((!isFirst && isLast) || (isFirst && isLast))
+            {
+                assembledImpulseData.append(packet.m_data_);
+                QByteArray finalData;
+                if (packet.m_header_.m_flags_.m_boolean_isCompressed)
+                    finalData = decompressData(assembledImpulseData);
+                else
+                    finalData = assembledImpulseData;
+
+                const int* intArray = reinterpret_cast<const int*>(finalData.constData());
+                const quint32 dataSizeInInts = finalData.size() / sizeof(int);
+                listSignalData.resize(static_cast<int>(dataSizeInInts));
+                memcpy(listSignalData.data(), intArray, finalData.size());
+
+                x3.reserve(listSignalData.size());
+                sin3.reserve(listSignalData.size());
+                cos3.reserve(listSignalData.size());
+                amp3.reserve(listSignalData.size());
+
+                for(int i{};i<listSignalData.size();++i) {
+                    sin3.push_back(static_cast<short>(listSignalData[i] & 0xFFFF));
+                    cos3.push_back(static_cast<short>((listSignalData[i] >> 16) & 0xFFFF));
+                    amp3.push_back(static_cast<float>(sqrt(10.0)*sqrt(sin3[i] * sin3[i]/10.0 + cos3[i] * cos3[i]/10.0)));
+                    x3.push_back(i);
+                }
+
                 if (ui->wdgt_CHAN3->isChecked()) {
                     plot_->graph(2)->setVisible(true);
-                    plot_->graph(2)->setData(X, AMP3);
+                    plot_->graph(2)->setData(x3, amp3);
                 } else {
                     plot_->graph(2)->setVisible(false);
                 }
+
+                plot_->xAxis->rescale();
+                plot_->yAxis->rescale();
+
+                plot_->replot(QCustomPlot::rpQueuedReplot);
+
+                x3.clear();
+                sin3.clear();
+                cos3.clear();
+                amp3.clear();
+
+                assembledImpulseData.clear();
+            }
+            if ((!isFirst && !isLast) || (isFirst && !isLast))
+            {
+                assembledImpulseData.append(packet.m_data_);
+            }
+
+            break;
+        }
+        case UDP_DATA::CHANNEL_DATA4: {
+            static QByteArray assembledImpulseData;
+
+            QVector<int> listSignalData;
+            listSignalData.reserve(packet.m_header_.m_int_totalDataSize_/sizeof(int));
+
+            const bool isFirst = packet.m_header_.m_flags_.m_boolean_isFirst_;
+            const bool isLast = packet.m_header_.m_flags_.m_boolean_isLast_;
+            if ((!isFirst && isLast) || (isFirst && isLast))
+            {
+                assembledImpulseData.append(packet.m_data_);
+                QByteArray finalData;
+                if (packet.m_header_.m_flags_.m_boolean_isCompressed)
+                    finalData = decompressData(assembledImpulseData);
+                else
+                    finalData = assembledImpulseData;
+
+                const int* intArray = reinterpret_cast<const int*>(finalData.constData());
+                const quint32 dataSizeInInts = finalData.size() / sizeof(int);
+                listSignalData.resize(static_cast<int>(dataSizeInInts));
+                memcpy(listSignalData.data(), intArray, finalData.size());
+
+                x4.reserve(listSignalData.size());
+                sin4.reserve(listSignalData.size());
+                cos4.reserve(listSignalData.size());
+                amp4.reserve(listSignalData.size());
+
+                for(int i{};i<listSignalData.size();++i) {
+                    sin4.push_back(static_cast<short>(listSignalData[i] & 0xFFFF));
+                    cos4.push_back(static_cast<short>((listSignalData[i] >> 16) & 0xFFFF));
+                    amp4.push_back(static_cast<float>(sqrt(10.0)*sqrt(sin4[i] * sin4[i]/10.0 + cos4[i] * cos4[i]/10.0)));
+                    x4.push_back(i);
+                }
+
                 if (ui->wdgt_CHAN4->isChecked()) {
                     plot_->graph(3)->setVisible(true);
-                    plot_->graph(3)->setData(X, AMP4);
+                    plot_->graph(3)->setData(x4, amp4);
                 } else {
                     plot_->graph(3)->setVisible(false);
                 }
+
+                plot_->xAxis->rescale();
+                plot_->yAxis->rescale();
+
+                plot_->replot(QCustomPlot::rpQueuedReplot);
+
+                x4.clear();
+                sin4.clear();
+                cos4.clear();
+                amp4.clear();
+
+                assembledImpulseData.clear();
+            }
+            if ((!isFirst && !isLast) || (isFirst && !isLast))
+            {
+                assembledImpulseData.append(packet.m_data_);
+            }
+
+            break;
+        }
+        case UDP_DATA::CHANNEL_DATA5: {
+            static QByteArray assembledImpulseData;
+
+            QVector<int> listSignalData;
+            listSignalData.reserve(packet.m_header_.m_int_totalDataSize_/sizeof(int));
+
+            const bool isFirst = packet.m_header_.m_flags_.m_boolean_isFirst_;
+            const bool isLast = packet.m_header_.m_flags_.m_boolean_isLast_;
+            if ((!isFirst && isLast) || (isFirst && isLast))
+            {
+                assembledImpulseData.append(packet.m_data_);
+                QByteArray finalData;
+                if (packet.m_header_.m_flags_.m_boolean_isCompressed)
+                    finalData = decompressData(assembledImpulseData);
+                else
+                    finalData = assembledImpulseData;
+
+                const int* intArray = reinterpret_cast<const int*>(finalData.constData());
+                const quint32 dataSizeInInts = finalData.size() / sizeof(int);
+                listSignalData.resize(static_cast<int>(dataSizeInInts));
+                memcpy(listSignalData.data(), intArray, finalData.size());
+
+                x5.reserve(listSignalData.size());
+                sin5.reserve(listSignalData.size());
+                cos5.reserve(listSignalData.size());
+                amp5.reserve(listSignalData.size());
+
+                for(int i{};i<listSignalData.size();++i) {
+                    sin5.push_back(static_cast<short>(listSignalData[i] & 0xFFFF));
+                    cos5.push_back(static_cast<short>((listSignalData[i] >> 16) & 0xFFFF));
+                    amp5.push_back(static_cast<float>(sqrt(10.0)*sqrt(sin5[i] * sin5[i]/10.0 + cos5[i] * cos5[i]/10.0)));
+                    x5.push_back(i);
+                }
+
                 if (ui->wdgt_CHAN5->isChecked()) {
                     plot_->graph(4)->setVisible(true);
-                    plot_->graph(4)->setData(X, AMP5);
+                    plot_->graph(4)->setData(x5, amp5);
                 } else {
                     plot_->graph(4)->setVisible(false);
                 }
@@ -398,6 +572,11 @@ void Client::onReadyReadUdp() {
                 plot_->yAxis->rescale();
 
                 plot_->replot(QCustomPlot::rpQueuedReplot);
+
+                x5.clear();
+                sin5.clear();
+                cos5.clear();
+                amp5.clear();
 
                 assembledImpulseData.clear();
             }

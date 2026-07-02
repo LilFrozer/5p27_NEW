@@ -34,10 +34,10 @@ add_executable(server_mil
     viodImit.h
 )
 
-#add_library(libdspapi SHARED IMPORTED)
-#set_target_properties(libdspapi PROPERTIES
-#    IMPORTED_LOCATION C:/tmp/5p27_NEW/Server/libdspapidata.so
-#)
+add_library(libdspapi SHARED IMPORTED)
+set_target_properties(libdspapi PROPERTIES
+    IMPORTED_LOCATION C:/Users/user/Desktop/OLD_BOS/Server/libdspapidata.so
+)
 
 add_library(zstd STATIC
     zstd/lib/common/debug.c
@@ -74,7 +74,7 @@ target_include_directories(zstd PUBLIC
 )
 
 target_link_libraries(server_mil Qt${QT_VERSION_MAJOR}::Core -lSocket Qt${QT_VERSION_MAJOR}::Network)
-#target_link_libraries(server_mil libdspapi)
+target_link_libraries(server_mil libdspapi)
 target_link_libraries(server_mil -lzstd)
 
 if(CMAKE_SYSTEM_NAME STREQUAL "KPDA")

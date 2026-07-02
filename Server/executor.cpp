@@ -131,34 +131,9 @@ void Server::onReadyRead()
     }
 }
 
-void Server::processData() {
-    this->sendData(0);
-    this->sendData(1);
-
-    chan1.reserve(Executor::instance().get_far_data().ki_kd);
-    chan2.reserve(Executor::instance().get_far_data().ki_kd);
-    chan3.reserve(Executor::instance().get_far_data().ki_kd);
-    chan4.reserve(Executor::instance().get_far_data().ki_kd);
-    chan5.reserve(Executor::instance().get_far_data().ki_kd);
-    for (size_t i{};i<Executor::instance().get_far_data().ki_kd;++i) {
-        chan1.push_back(Executor::instance().get_far_data().channel1[i]);
-        chan2.push_back(Executor::instance().get_far_data().channel2[i]);
-        chan3.push_back(Executor::instance().get_far_data().channel3[i]);
-        chan4.push_back(Executor::instance().get_far_data().channel4[i]);
-        chan5.push_back(Executor::instance().get_far_data().channel5[i]);
-    }
-
-    this->sendData(2);
-
-    chan1.clear();
-    chan2.clear();
-    chan3.clear();
-    chan4.clear();
-    chan5.clear();
-}
-
 void Server::sendData(uint8_t idData) {
-    if (idData == 2 && Executor::instance().get_far_data().ki_kd == 0) return;
+    if ((idData == UDP_DATA::CHANNEL_DATA1 || UDP_DATA::CHANNEL_DATA2 || UDP_DATA::CHANNEL_DATA3 || UDP_DATA::CHANNEL_DATA4 || UDP_DATA::CHANNEL_DATA5)
+            && Executor::instance().get_far_data().ki_kd == 0) return;
 
     QString addr = QString::fromStdString(client_data_.ip);
     u16 port = client_data_.port;
@@ -188,13 +163,13 @@ void Server::sendData(uint8_t idData) {
 
     switch(idData)
     {
-    case 0:
+    case UDP_DATA::STATUS_CSS:
     {
         src = Executor::instance().get_far_data().status_css;
         size_DATA = Constants::AMOUNT_STATUSES_CSS * sizeof(unsigned);
         break;
     }
-    case 1:
+    case UDP_DATA::STATUS_SUM:
     {
         int* d = needBuf(Constants::AMOUNT_SUM * Constants::AMOUNT_STATUSES_SUM);
         int* p = d;
@@ -205,23 +180,62 @@ void Server::sendData(uint8_t idData) {
         size_DATA = (quint32)((p - d) * sizeof(int));
         break;
     }
-    case 2:
+    case UDP_DATA::CHANNEL_DATA1:
     {
-        const quint32 n = 5u;
-        if (n == 0)
-        {
-            src = nullptr;
-            size_DATA = 0;
-            break;
-        }
-        // все одинаковой длины
-        const quint32 len = static_cast<quint32>(chan1.size());
-        int* d = needBuf(size_t(n) * len);
+        chan1.reserve(Executor::instance().get_far_data().ki_kd);
+        for (size_t i{};i<Executor::instance().get_far_data().ki_kd;++i)
+            chan1.push_back(Executor::instance().get_far_data().channel1[i]);
+        const quint32 n = 1u;
+        int* d = needBuf(size_t(n) * static_cast<quint32>(chan1.size()));
         int* p = d;
         p = std::copy(chan1.begin(), chan1.end(), p);
+        src = d; size_DATA = (quint32)((p - d) * sizeof(int));
+        break;
+    }
+    case UDP_DATA::CHANNEL_DATA2:
+    {
+        chan2.reserve(Executor::instance().get_far_data().ki_kd);
+        for (size_t i{};i<Executor::instance().get_far_data().ki_kd;++i)
+            chan2.push_back(Executor::instance().get_far_data().channel2[i]);
+        const quint32 n = 1u;
+        int* d = needBuf(size_t(n) * static_cast<quint32>(chan2.size()));
+        int* p = d;
         p = std::copy(chan2.begin(), chan2.end(), p);
+        src = d; size_DATA = (quint32)((p - d) * sizeof(int));
+        break;
+    }
+    case UDP_DATA::CHANNEL_DATA3:
+    {
+        chan3.reserve(Executor::instance().get_far_data().ki_kd);
+        for (size_t i{};i<Executor::instance().get_far_data().ki_kd;++i)
+            chan3.push_back(Executor::instance().get_far_data().channel3[i]);
+        const quint32 n = 1u;
+        int* d = needBuf(size_t(n) * static_cast<quint32>(chan3.size()));
+        int* p = d;
         p = std::copy(chan3.begin(), chan3.end(), p);
+        src = d; size_DATA = (quint32)((p - d) * sizeof(int));
+        break;
+    }
+    case UDP_DATA::CHANNEL_DATA4:
+    {
+        chan4.reserve(Executor::instance().get_far_data().ki_kd);
+        for (size_t i{};i<Executor::instance().get_far_data().ki_kd;++i)
+            chan4.push_back(Executor::instance().get_far_data().channel4[i]);
+        const quint32 n = 1u;
+        int* d = needBuf(size_t(n) * static_cast<quint32>(chan4.size()));
+        int* p = d;
         p = std::copy(chan4.begin(), chan4.end(), p);
+        src = d; size_DATA = (quint32)((p - d) * sizeof(int));
+        break;
+    }
+    case UDP_DATA::CHANNEL_DATA5:
+    {
+        chan5.reserve(Executor::instance().get_far_data().ki_kd);
+        for (size_t i{};i<Executor::instance().get_far_data().ki_kd;++i)
+            chan5.push_back(Executor::instance().get_far_data().channel5[i]);
+        const quint32 n = 1u;
+        int* d = needBuf(size_t(n) * static_cast<quint32>(chan5.size()));
+        int* p = d;
         p = std::copy(chan5.begin(), chan5.end(), p);
         src = d; size_DATA = (quint32)((p - d) * sizeof(int));
         break;
@@ -264,6 +278,12 @@ void Server::sendData(uint8_t idData) {
         if (bytesSent == -1)
             qDebug() << "Error_udp:" << server_udp_->errorString();
     }
+
+    chan1.clear();
+    chan2.clear();
+    chan3.clear();
+    chan4.clear();
+    chan5.clear();
 }
 
 Executor::Executor(QObject *parent, ApiMode mode) : QObject{parent}, fpga_regs_{std::make_unique<fpga_regs::fpga_mem_summator>()}
@@ -578,29 +598,31 @@ void Executor::loadCss()
 
 void Executor::loadNewKu(int ki, int ns)
 {
+    this->loadStop();
+
     loadTS("/po/complex/tech_new/furke/css/TS_1.dat");
 
-    std::string PATH{PATH_HARD};
+//    std::string PATH{PATH_HARD};
+
+    std::vector<qword> words;
+    for(size_t i{};i<4+40;++i)
+        words.push_back(qword{0, 0, 0, 0});
 
     // !css!
-    std::vector<qword> words1;
-    for(size_t i{};i<4;++i)
-        words1.push_back(qword{0, 0, 0, 0});
-
-    proto_farbos::farbos_header *cssfbhdr = reinterpret_cast<proto_farbos::farbos_header*>(&words1[0]);
+    proto_farbos::farbos_header *cssfbhdr = reinterpret_cast<proto_farbos::farbos_header*>(&words[0]);
     cssfbhdr->dk = 12;
     cssfbhdr->tk = 0x9;
     cssfbhdr->prmbl = 0xA5;
     cssfbhdr->snp = 0;
     cssfbhdr->py = 0;
     cssfbhdr->marker = 0;
-    unsigned long *ptr = reinterpret_cast<unsigned long*>(&words1[0]);
+    unsigned long *ptr = reinterpret_cast<unsigned long*>(&words[0]);
     std::string bytes = proto_farbos::extract14BytesToHex(ptr, 0);
     std::vector<u8> vecBytes = proto_farbos::hexToBytes(bytes);
     u16 calculatedCRC = proto_farbos::Calc_CRC(vecBytes);
     cssfbhdr->crc = calculatedCRC;
 
-    proto_farbos::frame_upr_css *css = reinterpret_cast<proto_farbos::frame_upr_css*>(&words1[1]);
+    proto_farbos::frame_upr_css *css = reinterpret_cast<proto_farbos::frame_upr_css*>(&words[1]);
     int kns = ns;
     css->nkch = 2;
     css->pr_zi = 1;
@@ -613,24 +635,20 @@ void Executor::loadNewKu(int ki, int ns)
     css->kns = tsTable_[kns].kns;
 
     // !sum!
-    std::vector<qword> words2;
-    for(size_t i{};i<40;++i)
-        words2.push_back(qword{0, 0, 0, 0});
-
-    proto_farbos::farbos_header *sumfbhdr = reinterpret_cast<proto_farbos::farbos_header*>(&words2[0]);
+    proto_farbos::farbos_header *sumfbhdr = reinterpret_cast<proto_farbos::farbos_header*>(&words[4]);
     sumfbhdr->dk = 156;
     sumfbhdr->tk = 0x9;
     sumfbhdr->prmbl = 0xA5;
     sumfbhdr->snp = 0;
     sumfbhdr->py = 0;
     sumfbhdr->marker = 0;
-    unsigned long *p = reinterpret_cast<unsigned long*>(&words2[0]);
+    unsigned long *p = reinterpret_cast<unsigned long*>(&words[4]);
     std::string b = proto_farbos::extract14BytesToHex(p, 0);
     std::vector<u8> v = proto_farbos::hexToBytes(b);
     uint16_t c = proto_farbos::Calc_CRC(v);
     sumfbhdr->crc = c;
 
-    proto_farbos::frame_upr_sum *sum = reinterpret_cast<proto_farbos::frame_upr_sum*>(&words2[1]);
+    proto_farbos::frame_upr_sum *sum = reinterpret_cast<proto_farbos::frame_upr_sum*>(&words[5]);
     sum->ump = 1;
     sum->dzi = tsTable_[kns].dzi;
     sum->vvi = tsTable_[kns].vvi;
@@ -661,8 +679,9 @@ void Executor::loadNewKu(int ki, int ns)
 //    sum->sinCos[5] = 0x7FFF;
 
     int smid = 4;
-    viodSender_->sendViodMsg(words1, 0, 0, 0, smid, 1, 2, 2);
-    viodSender_->sendViodMsg(words2, 0, 0, 0, smid, 1, 1, 2);
+    viodSender_->sendViodMsg(words, 0, 0, 0, smid, 1, 1, 2);
+
+    this->loadStart();
 }
 
 Executor& Executor::instance()

@@ -207,7 +207,7 @@ void OpenApiViod::rcvLoop()
                             buffer.push_back(data_in[i]);
                         }
                         if (full_header->viod_header.f != 1 && full_header->viod_header.e == 1) {
-                            far_data_.ki_kd = buffer.size() * 4;
+                            far_data_.ki_kd = full_header->viod_header.full_length * 4;
                             qDebug() << "[OpenApiViod]FullSizeData1=" << buffer.size();
                             for (u32 i{};i<buffer.size();++i) {
                                 far_data_.channel1[i*4] = buffer[i].word_0;
@@ -217,7 +217,7 @@ void OpenApiViod::rcvLoop()
                             }
                             buffer.clear();
                         }
-                        Server::instance().processData();
+                        Server::instance().sendData(UDP_DATA::CHANNEL_DATA1);
                         break;
                     }
                     case 1: {
@@ -226,7 +226,7 @@ void OpenApiViod::rcvLoop()
                             buffer.push_back(data_in[i]);
                         }
                         if (full_header->viod_header.f != 1 && full_header->viod_header.e == 1) {
-                            far_data_.ki_kd = buffer.size() * 4;
+                            far_data_.ki_kd = full_header->viod_header.full_length * 4;
                             qDebug() << "[OpenApiViod]FullSizeData2=" << buffer.size();
                             for (u32 i{};i<buffer.size();++i) {
                                 far_data_.channel2[i*4] = buffer[i].word_0;
@@ -236,7 +236,7 @@ void OpenApiViod::rcvLoop()
                             }
                             buffer.clear();
                         }
-                        Server::instance().processData();
+                        Server::instance().sendData(UDP_DATA::CHANNEL_DATA2);
                         break;
                     }
                     case 2: {
@@ -245,7 +245,7 @@ void OpenApiViod::rcvLoop()
                             buffer.push_back(data_in[i]);
                         }
                         if (full_header->viod_header.f != 1 && full_header->viod_header.e == 1) {
-                            far_data_.ki_kd = buffer.size() * 4;
+                            far_data_.ki_kd = full_header->viod_header.full_length * 4;
                             qDebug() << "[OpenApiViod]FullSizeData3=" << buffer.size();
                             for (u32 i{};i<buffer.size();++i) {
                                 far_data_.channel3[i*4] = buffer[i].word_0;
@@ -255,7 +255,7 @@ void OpenApiViod::rcvLoop()
                             }
                             buffer.clear();
                         }
-                        Server::instance().processData();
+                        Server::instance().sendData(UDP_DATA::CHANNEL_DATA3);
                         break;
                     }
                     case 3: {
@@ -264,7 +264,7 @@ void OpenApiViod::rcvLoop()
                             buffer.push_back(data_in[i]);
                         }
                         if (full_header->viod_header.f != 1 && full_header->viod_header.e == 1) {
-                            far_data_.ki_kd = buffer.size() * 4;
+                            far_data_.ki_kd = full_header->viod_header.full_length * 4;
                             qDebug() << "[OpenApiViod]FullSizeData4=" << buffer.size();
                             for (u32 i{};i<buffer.size();++i) {
                                 far_data_.channel4[i*4] = buffer[i].word_0;
@@ -274,7 +274,7 @@ void OpenApiViod::rcvLoop()
                             }
                             buffer.clear();
                         }
-                        Server::instance().processData();
+                        Server::instance().sendData(UDP_DATA::CHANNEL_DATA4);
                         break;
                     }
                     case 4: {
@@ -283,17 +283,17 @@ void OpenApiViod::rcvLoop()
                             buffer.push_back(data_in[i]);
                         }
                         if (full_header->viod_header.f != 1 && full_header->viod_header.e == 1) {
-                            far_data_.ki_kd = buffer.size() * 4;
+                            far_data_.ki_kd = full_header->viod_header.full_length * 4;
                             qDebug() << "[OpenApiViod]FullSizeData5=" << buffer.size();
                             for (u32 i{};i<buffer.size();++i) {
-                                far_data_.channel2[i*4] = buffer[i].word_0;
-                                far_data_.channel2[i*4+1] = buffer[i].word_1;
-                                far_data_.channel2[i*4+2] = buffer[i].word_2;
-                                far_data_.channel2[i*4+3] = buffer[i].word_3;
+                                far_data_.channel5[i*4] = buffer[i].word_0;
+                                far_data_.channel5[i*4+1] = buffer[i].word_1;
+                                far_data_.channel5[i*4+2] = buffer[i].word_2;
+                                far_data_.channel5[i*4+3] = buffer[i].word_3;
                             }
                             buffer.clear();
                         }
-                        Server::instance().processData();
+                        Server::instance().sendData(UDP_DATA::CHANNEL_DATA5);
                         break;
                     }
                     case 5: {
@@ -303,6 +303,7 @@ void OpenApiViod::rcvLoop()
                             far_data_.status_css[i * 4 + 2] = data_in[i].word_2;
                             far_data_.status_css[i * 4 + 3] = data_in[i].word_3;
                         }
+                        Server::instance().sendData(UDP_DATA::STATUS_CSS);
                         for (size_t i{}; i < 3; i++) {
                             for (size_t j{}; j < 8; j++) {
                                 far_data_.status_sum[i][j * 4 + 0] = data_in[4 + i * 8 + j].word_0;
@@ -311,7 +312,7 @@ void OpenApiViod::rcvLoop()
                                 far_data_.status_sum[i][j * 4 + 3] = data_in[4 + i * 8 + j].word_3;
                             }
                         }
-                        Server::instance().processData();
+                        Server::instance().sendData(UDP_DATA::STATUS_SUM);
                         break;
                     }
                     default: qDebug() << "[OpenApiViod]???"; break;

@@ -20,6 +20,17 @@
 #include "groupData.h"
 #include "zstd.h"
 
+namespace UDP_DATA
+{
+    const u8 STATUS_CSS = 0x0;
+    const u8 STATUS_SUM = 0x1;
+    const u8 CHANNEL_DATA1 = 0x2;
+    const u8 CHANNEL_DATA2 = 0x3;
+    const u8 CHANNEL_DATA3 = 0x4;
+    const u8 CHANNEL_DATA4 = 0x5;
+    const u8 CHANNEL_DATA5 = 0x6;
+}
+
 class Server : public QObject
 {
     Q_OBJECT
@@ -28,7 +39,6 @@ public:
     static Server &instance();
     void doStart();
     void sendData(uint8_t idData);
-    void processData();
     static QByteArray compressData(const char* data, int size);
 private:
     explicit Server(QObject *parent = nullptr);

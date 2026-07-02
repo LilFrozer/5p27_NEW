@@ -18,6 +18,17 @@ class Client;
 }
 QT_END_NAMESPACE
 
+namespace UDP_DATA
+{
+    const u8 STATUS_CSS = 0x0;
+    const u8 STATUS_SUM = 0x1;
+    const u8 CHANNEL_DATA1 = 0x2;
+    const u8 CHANNEL_DATA2 = 0x3;
+    const u8 CHANNEL_DATA3 = 0x4;
+    const u8 CHANNEL_DATA4 = 0x5;
+    const u8 CHANNEL_DATA5 = 0x6;
+}
+
 class Client : public QMainWindow
 {
     Q_OBJECT
@@ -49,6 +60,12 @@ private:
 private:
     QVector<int> status_css_{};
     QVector<int> status_sum_{};
+    QVector<double> x1, x2, x3, x4, x5;
+    QVector<double> sin1, cos1, amp1, ph1;
+    QVector<double> sin2, cos2, amp2, ph2;
+    QVector<double> sin3, cos3, amp3, ph3;
+    QVector<double> sin4, cos4, amp4, ph4;
+    QVector<double> sin5, cos5, amp5, ph5;
 private:
     QByteArray recvBuffer_;
     TransferProtocol::Packet readPacketFast(QByteArray &DATA);
